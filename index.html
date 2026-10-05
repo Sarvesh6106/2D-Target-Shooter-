@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Action-packed 2D Target Shooter web arcade game built with HTML5 Canvas, CSS3, and JavaScript.">
+    <title>Cyber Target Shooter - 2D Arcade Game</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container" id="gameContainer">
+        <!-- Canvas Element -->
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- Top HUD Header -->
+        <header class="hud-overlay" id="hudOverlay">
+            <div class="hud-card">
+                <span class="hud-label">SCORE</span>
+                <span class="hud-value" id="hudScore">0</span>
+            </div>
+            
+            <div class="hud-card">
+                <span class="hud-label">LIVES</span>
+                <div class="lives-container" id="hudLives">
+                    <span class="heart">❤️</span>
+                    <span class="heart">❤️</span>
+                    <span class="heart">❤️</span>
+                </div>
+            </div>
+
+            <div class="hud-card timer-card">
+                <span class="hud-label">TIME</span>
+                <span class="hud-value" id="hudTimer">60s</span>
+            </div>
+
+            <div class="hud-card">
+                <span class="hud-label">ACCURACY</span>
+                <span class="hud-value" id="hudAccuracy">100%</span>
+            </div>
+
+            <div class="hud-card high-score-card">
+                <span class="hud-label">BEST</span>
+                <span class="hud-value" id="hudHighScore">0</span>
+            </div>
+
+            <button class="icon-btn" id="pauseBtn" title="Pause Game (P)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="6" y="4" width="4" height="16"></rect>
+                    <rect x="14" y="4" width="4" height="16"></rect>
+                </svg>
+            </button>
+        </header>
+
+        <!-- Start Screen Overlay -->
+        <div class="screen-overlay active" id="startScreen">
+            <div class="modal-card">
+                <div class="badge">CANVAS 2D ARCADE</div>
+                <h1 class="title">CYBER TARGET<br><span class="highlight">SHOOTER</span></h1>
+                <p class="subtitle">Aim fast, destroy incoming targets, and prevent them from reaching your base area before time runs out!</p>
+                
+                <div class="controls-guide">
+                    <div class="control-item">
+                        <div class="key-badge">🖱️ Mouse</div>
+                        <span>Aim Direction</span>
+                    </div>
+                    <div class="control-item">
+                        <div class="key-badge">Left Click</div>
+                        <span>Fire Turret</span>
+                    </div>
+                    <div class="control-item">
+                        <div class="key-badge">P Key</div>
+                        <span>Pause / Resume</span>
+                    </div>
+                </div>
+
+                <div class="start-high-score">
+                    TOP SCORE: <span id="startHighScore">0</span>
+                </div>
+
+                <button class="btn btn-primary" id="startBtn">
+                    <span>START GAME</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Pause Screen Overlay -->
+        <div class="screen-overlay hidden" id="pauseScreen">
+            <div class="modal-card modal-compact">
+                <h2 class="title">GAME <span class="highlight">PAUSED</span></h2>
+                <p class="subtitle">Press <kbd>P</kbd> or click below to resume your game.</p>
+                
+                <div class="btn-group">
+                    <button class="btn btn-primary" id="resumeBtn">RESUME</button>
+                    <button class="btn btn-secondary" id="pauseRestartBtn">RESTART</button>
+                    <button class="btn btn-danger" id="quitBtn">MAIN MENU</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Over Screen Overlay -->
+        <div class="screen-overlay hidden" id="gameOverScreen">
+            <div class="modal-card">
+                <div class="badge danger" id="gameOverBadge">TIME'S UP!</div>
+                <h1 class="title" id="gameOverTitle">GAME <span class="highlight-danger">OVER</span></h1>
+                
+                <div class="results-grid">
+                    <div class="result-box">
+                        <span class="result-label">FINAL SCORE</span>
+                        <span class="result-val highlight" id="finalScore">0</span>
+                    </div>
+                    <div class="result-box">
+                        <span class="result-label">ACCURACY</span>
+                        <span class="result-val" id="finalAccuracy">0%</span>
+                    </div>
+                    <div class="result-box">
+                        <span class="result-label">TARGETS HIT</span>
+                        <span class="result-val" id="finalHits">0</span>
+                    </div>
+                    <div class="result-box">
+                        <span class="result-label">HIGH SCORE</span>
+                        <span class="result-val" id="finalHighScore">0</span>
+                    </div>
+                </div>
+
+                <div class="new-record-banner hidden" id="newRecordBanner">
+                    🎉 NEW HIGH SCORE RECORD! 🎉
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-primary" id="restartBtn">
+                        <span>PLAY AGAIN</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+                        </svg>
+                    </button>
+                    <button class="btn btn-secondary" id="gameOverQuitBtn">MAIN MENU</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
